@@ -1,0 +1,17 @@
+.idea/
+*.pyc
+#*.pth
+dataset/
+test_results/
+results/
+logs/
+scripts/
+checkpoints/
+.DS_Store
+Print/
+*.sh
+*.csv
+*.txt
+*.png
+*.pdf
+!requirements.txt
