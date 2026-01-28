@@ -8,6 +8,7 @@ logs/
 scripts/
 checkpoints/
 .DS_Store
+Figure/
 Print/
 *.sh
 *.csv

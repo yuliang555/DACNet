@@ -41,11 +41,13 @@ class Fusion(nn.Module):
     def forward(self, x_loc, indices, lamda=None):
         B, C, L = x_loc.shape        
 
-        map_tmp = self.compress(self.map_raw).permute(0, 2, 1)       # (C, H, P+L)
+        map_tmp = self.compress(self.map_raw)                        # (C, P+L, H)
 
         if self.mix:
-            map_tmp = self.mixing(map_tmp.permute(1, 2, 0))          # (H, P+L, C)
-            map_tmp = map_tmp.permute(2, 0, 1)                       # (C, H, P+L)
+            map_tmp = self.mixing(map_tmp.permute(1, 2, 0))          # (P+L, H, C)
+            map_tmp = map_tmp.permute(2, 1, 0)                       # (C, H, P+L)
+        else:
+            map_tmp = map_tmp.permute(0, 2, 1)                       # (C, H, P+L)
 
         map_st = self.denoise(map_tmp)                               # (C, H, P+L)       
 

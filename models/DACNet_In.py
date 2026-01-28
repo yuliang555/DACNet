@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from layers.Fusion import Fusion
-from layers.BackBone import iTransformer, Linear, MLP, DLinear 
+from layers.BackBone import iTransformer, Linear, MLP, DLinear, DMLP 
 from layers.Norm import InstanceNorm
 
 
@@ -25,7 +25,9 @@ class Model(nn.Module):
         elif configs.backbone == 'dlinear':
             self.backbone = DLinear(configs)            
         elif configs.backbone == 'mlp':
-            self.backbone = MLP(configs)          
+            self.backbone = MLP(configs)
+        elif configs.backbone == 'dmlp':
+            self.backbone = DMLP(configs)
 
     def forward(self, x, x_mark, indices):
         

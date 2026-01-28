@@ -57,6 +57,35 @@ class DLinear(nn.Module):
         dec_out = (sy + ty)
 
         return dec_out
+    
+
+class DMLP(nn.Module):
+    """
+    Decomposition-MLP
+    """
+    def __init__(self, configs):
+        super(DMLP, self).__init__()
+
+        kernel_size = 25
+        self.decompsition = series_decomp(kernel_size)
+        self.MLP_Seasonal = nn.Sequential(
+            nn.Linear(configs.seq_len, configs.d_model),
+            nn.ReLU(),
+            nn.Linear(configs.d_model, configs.pred_len)
+        )
+        self.MLP_Trend = nn.Sequential(
+            nn.Linear(configs.seq_len, configs.d_model),
+            nn.ReLU(),
+            nn.Linear(configs.d_model, configs.pred_len)
+        )
+
+    def forward(self, x, x_mark_enc):
+        sx, tx = self.decompsition(x)                   
+        sy = self.MLP_Seasonal(sx)
+        ty = self.MLP_Trend(tx)
+        dec_out = (sy + ty)
+
+        return dec_out
 
 
 class Linear(nn.Module):

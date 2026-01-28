@@ -41,7 +41,7 @@ parser.add_argument('--D_mix', type=int, default=8, help='mixing dimension')
 parser.add_argument('--delta', type=float, default=0.1, help='Huber Loss delta')
 parser.add_argument('--sim_mode', type=str, default='l1', help="simlarity measure: ['l1', 'l2', 'cosine', 'dot', 'pearson']")
 parser.add_argument('--mix', type=int, default=1, help="0: no mixing, 1: with mixing")
-parser.add_argument('--backbone', type=str, default='dlinear', help="options: ['linear', 'dlinear', 'mlp', 'itransformer']")
+parser.add_argument('--backbone', type=str, default='dmlp', help="options: ['linear', 'dlinear', 'mlp', 'dmlp', 'itransformer']")
 parser.add_argument('--cycle', type=int, default=96, help='period of data')
 
 # Formers 
