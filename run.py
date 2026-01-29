@@ -38,10 +38,10 @@ parser.add_argument('--use_norm', type=int, default=1, help='0: no norm, 1: norm
 parser.add_argument('--D_cp', type=int, default=16, help='compression dimension')
 parser.add_argument('--D_de', type=int, default=16, help='denoising dimension')
 parser.add_argument('--D_mix', type=int, default=8, help='mixing dimension')
-parser.add_argument('--delta', type=float, default=0.1, help='Huber Loss delta')
+parser.add_argument('--beta', type=float, default=0.1, help='Huber Loss beta')
 parser.add_argument('--sim_mode', type=str, default='l1', help="simlarity measure: ['l1', 'l2', 'cosine', 'dot', 'pearson']")
 parser.add_argument('--mix', type=int, default=1, help="0: no mixing, 1: with mixing")
-parser.add_argument('--backbone', type=str, default='dmlp', help="options: ['linear', 'dlinear', 'mlp', 'dmlp', 'itransformer']")
+parser.add_argument('--backbone', type=str, default='mlp', help="options: ['linear', 'dlinear', 'mlp', 'dmlp', 'itransformer']")
 parser.add_argument('--cycle', type=int, default=96, help='period of data')
 
 # Formers 

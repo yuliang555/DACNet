@@ -3,7 +3,6 @@ from exp.exp_basic import Exp_Basic
 from models import DACNet_In, DACNet_Out 
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
-from utils.draw import Attention
 
 import numpy as np
 import pandas
@@ -70,7 +69,7 @@ class Exp_Main(Exp_Basic):
         elif self.args.loss == 'mae':
             criterion = nn.L1Loss()
         elif self.args.loss == 'huber':
-            criterion = nn.SmoothL1Loss(beta=self.args.delta)        
+            criterion = nn.SmoothL1Loss(beta=self.args.beta)        
         return criterion
 
     def vali(self, vali_loader, criterion):
