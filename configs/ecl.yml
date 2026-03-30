@@ -1,0 +1,40 @@
+dataset: ecl
+fixed:
+  root_path: ./datasets/
+  data_path: ECL.csv
+  model: DACNet_In
+  model_id: ECL
+  data: custom
+  enc_in: 321
+  cycle: 168
+  learning_rate: 0.01
+  lradj: type4
+  sim_mode: l1
+  mix: 0
+  seq_len: 96
+  backbone: mlp
+pred_len_configs:
+  96:
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
+    D_mix: 8
+    d_model: 512
+  192:
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
+    D_mix: 8
+    d_model: 512
+  336:
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
+    D_mix: 8
+    d_model: 512
+  720:
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
+    D_mix: 8
+    d_model: 512

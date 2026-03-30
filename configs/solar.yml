@@ -1,0 +1,40 @@
+dataset: solar
+fixed:
+  root_path: ./datasets/
+  data_path: Solar.txt
+  model: DACNet_In
+  model_id: Solar
+  data: Solar
+  enc_in: 137
+  cycle: 144
+  learning_rate: 0.005
+  lradj: type1
+  sim_mode: l1
+  mix: 0
+  seq_len: 96
+  backbone: mlp
+pred_len_configs:
+  96:
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
+    D_mix: 8
+    d_model: 256
+  192:
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
+    D_mix: 8
+    d_model: 256
+  336:
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
+    D_mix: 8
+    d_model: 256
+  720:
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
+    D_mix: 8
+    d_model: 256

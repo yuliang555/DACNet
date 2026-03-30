@@ -1,0 +1,40 @@
+dataset: ettm1
+fixed:
+  root_path: ./datasets/
+  data_path: ETTm1.csv
+  model: DACNet_In
+  model_id: ETTm1
+  data: ETTm1
+  enc_in: 7
+  cycle: 96
+  learning_rate: 0.005
+  lradj: type1
+  sim_mode: l1
+  mix: 0
+  seq_len: 96
+  backbone: mlp
+pred_len_configs:
+  96:
+    use_norm: 2
+    D_cp: 16
+    D_de: 8
+    D_mix: 8
+    d_model: 128
+  192:
+    use_norm: 2
+    D_cp: 8
+    D_de: 24
+    D_mix: 8
+    d_model: 128
+  336:
+    use_norm: 2
+    D_cp: 8
+    D_de: 24
+    D_mix: 8
+    d_model: 128
+  720:
+    use_norm: 1
+    D_cp: 24
+    D_de: 16
+    D_mix: 8
+    d_model: 256

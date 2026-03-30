@@ -1,0 +1,40 @@
+dataset: etth2
+fixed:
+  root_path: ./datasets/
+  data_path: ETTh2.csv
+  model: DACNet_In
+  model_id: ETTh2
+  data: ETTh2
+  enc_in: 7
+  cycle: 24
+  learning_rate: 0.005
+  lradj: type1
+  sim_mode: l1
+  mix: 0
+  seq_len: 96
+  backbone: mlp
+pred_len_configs:
+  96:
+    use_norm: 2
+    D_cp: 8
+    D_de: 32
+    D_mix: 8
+    d_model: 64
+  192:
+    use_norm: 2
+    D_cp: 8
+    D_de: 32
+    D_mix: 8
+    d_model: 64
+  336:
+    use_norm: 2
+    D_cp: 8
+    D_de: 32
+    D_mix: 8
+    d_model: 64
+  720:
+    use_norm: 2
+    D_cp: 8
+    D_de: 32
+    D_mix: 8
+    d_model: 64
