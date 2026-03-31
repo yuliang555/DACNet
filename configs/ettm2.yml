@@ -16,10 +16,10 @@ fixed:
 pred_len_configs:
   96:
     use_norm: 2
-    D_cp: 16
-    D_de: 16
+    D_cp: 24
+    D_de: 48
     D_mix: 8
-    d_model: 256
+    d_model: 128
   192:
     use_norm: 2
     D_cp: 16

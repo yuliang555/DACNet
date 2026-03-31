@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
 import os
-import re
-import glob
-import shlex
 import subprocess
 import argparse
-import csv
 import yaml
-from collections import defaultdict
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 CONFIGS_DIR = os.path.join(ROOT, 'configs')
 
-LOSS_LIST = ['mae']
-PRED_LEN_LIST = [720]
-SEED_LIST = [2024, 2025, 2026, 2027, 2028]
+
+SEED_LIST = [2024]
+LOSS_LIST = ['mse', 'mae']
+PRED_LEN_LIST = [96, 192, 336, 720]
+
 
 parser = argparse.ArgumentParser(description='Run all experiments')
 parser.add_argument('--root_path', type=str, default='./datasets/', help='root path of the data file')
@@ -69,7 +66,7 @@ if __name__ == '__main__':
                 cfg = fixed.copy()
                 cfg.update(pred_len_configs[pred_len])
                 cfg['pred_len'] = pred_len
-                cfg['root_path'] = args.root_path  # override if needed
+                cfg['root_path'] = args.root_path
                 cfg['run_type'] = 'single'
 
                 run_one(cfg, seed, loss, pred_len, gpu=args.gpu)

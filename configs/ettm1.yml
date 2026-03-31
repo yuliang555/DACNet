@@ -19,19 +19,19 @@ pred_len_configs:
     D_cp: 16
     D_de: 8
     D_mix: 8
-    d_model: 128
+    d_model: 256
   192:
     use_norm: 2
-    D_cp: 8
-    D_de: 24
+    D_cp: 16
+    D_de: 16
     D_mix: 8
-    d_model: 128
+    d_model: 256
   336:
-    use_norm: 2
-    D_cp: 8
-    D_de: 24
+    use_norm: 1
+    D_cp: 16
+    D_de: 16
     D_mix: 8
-    d_model: 128
+    d_model: 256
   720:
     use_norm: 1
     D_cp: 24

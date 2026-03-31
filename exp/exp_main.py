@@ -245,8 +245,8 @@ class Exp_Main(Exp_Basic):
 
         mae, mse = metric(preds, trues)
 
-        metric_path = f"Print/{self.args.model_id}_{self.args.pred_len}.csv"
-        # metric_path = f"results_{self.args.run_type}.csv"
+        # metric_path = f"Print/{self.args.model_id}_{self.args.pred_len}.csv"
+        metric_path = f"results_{self.args.run_type}.csv"
         if not os.path.exists(metric_path):
             open(metric_path, "w").close()                      
         df = pandas.DataFrame({

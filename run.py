@@ -20,7 +20,7 @@ parser.add_argument('--run_type', type=str, default=all, help='options: [all, si
 
 # data loader
 parser.add_argument('--data', type=str, default='ETTh1', help='dataset type')
-parser.add_argument('--root_path', type=str, default='/home/yl/datasets', help='root path of the data file')
+parser.add_argument('--root_path', type=str, default='./datasets', help='root path of the data file')
 parser.add_argument('--data_path', type=str, default='ETTh1.csv', help='data file')
 parser.add_argument('--features', type=str, default='M',
                     help='forecasting task, options:[M, S, MS]; M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate')
@@ -70,7 +70,7 @@ parser.add_argument('--do_predict', action='store_true', help='whether to predic
 # optimization
 parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
 parser.add_argument('--itr', type=int, default=1, help='experiments times')
-parser.add_argument('--train_epochs', type=int, default=30, help='train epochs')
+parser.add_argument('--train_epochs', type=int, default=1, help='train epochs')
 parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
 parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
 parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
@@ -110,53 +110,39 @@ Exp = Exp_Main
 
 if args.is_training:
     for ii in range(args.itr):
-        for param1 in [64]:
-            # args.loss = param1
-            # args.cycle = param1
-            # args.pred_len = 720
-            # args.gpu = 1
-            # args.d_model = param1
-            for param2 in [8]:
-                # args.D_de = param2
-                # args.D_cp = param2
-                for param3 in [8]:
-                    # args.D_de = param3
-                    # args.learning_rate = param3
-                    # args.cycle = param
-                    # args.mix = mix
-                    # args.seq_len = param
 
-                    setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}'.format(            
-                        args.model,
-                        args.model_id,                               
-                        args.backbone,
-                        args.loss,                            
-                        args.d_model,
-                        args.learning_rate,
-                        args.lradj,
-                        args.seq_len,                       
-                        args.pred_len,
-                        args.use_norm,
-                        args.mix,
-                        args.D_cp,
-                        args.D_de,
-                        args.D_mix,
-                        args.sim_mode,
-                        args.cycle
-                    )                            
+        setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}_seed={}'.format(            
+            args.model,
+            args.model_id,                               
+            args.backbone,
+            args.loss,                            
+            args.d_model,
+            args.learning_rate,
+            args.lradj,
+            args.seq_len,                       
+            args.pred_len,
+            args.use_norm,
+            args.mix,
+            args.D_cp,
+            args.D_de,
+            args.D_mix,
+            args.sim_mode,
+            args.cycle,
+            args.random_seed
+        )                            
 
-                    exp = Exp(args)  # set experiments
-                    print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
-                    exp.train(setting)
+        exp = Exp(args)  # set experiments
+        print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
+        exp.train(setting)
 
-                    print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-                    exp.test(setting)
+        print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
+        exp.test(setting)
 
-                    if args.do_predict:
-                        print('>>>>>>>predicting : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-                        exp.predict(setting, True)
+        if args.do_predict:
+            print('>>>>>>>predicting : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
+            exp.predict(setting, True)
 
-                    torch.cuda.empty_cache()
+        torch.cuda.empty_cache()
 else:
 
     setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}'.format(            
