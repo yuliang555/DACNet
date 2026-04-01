@@ -15,7 +15,7 @@ fixed:
   backbone: mlp
 pred_len_configs:
   96:
-    use_norm: 2
+    use_norm: 1
     D_cp: 16
     D_de: 16
     D_mix: 8
