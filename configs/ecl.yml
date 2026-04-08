@@ -7,7 +7,7 @@ fixed:
   data: custom
   enc_in: 321
   cycle: 168
-  learning_rate: 0.01
+  learning_rate: 0.005
   lradj: type4
   sim_mode: l1
   mix: 0
@@ -36,7 +36,7 @@ pred_len_configs:
     d_model: 512
   720:
     use_norm: 1
-    D_cp: 1
+    D_cp: 16
     D_de: 16
     D_mix: 8
     d_model: 512

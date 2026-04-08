@@ -7,7 +7,7 @@ fixed:
   data: Solar
   enc_in: 137
   cycle: 144
-  learning_rate: 0.001
+  learning_rate: 0.005
   lradj: type1
   sim_mode: l1
   mix: 0
