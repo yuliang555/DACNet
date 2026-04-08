@@ -7,12 +7,14 @@ fixed:
   data: Solar
   enc_in: 137
   cycle: 144
-  learning_rate: 0.005
+  learning_rate: 0.001
   lradj: type1
   sim_mode: l1
   mix: 0
-  seq_len: 96
+  seq_len: 192
   backbone: mlp
+  use_drift: 0
+  use_svd: 0
 pred_len_configs:
   96:
     use_norm: 1

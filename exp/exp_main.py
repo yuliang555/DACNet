@@ -3,6 +3,7 @@ from exp.exp_basic import Exp_Basic
 from models import DACNet_In, DACNet_Out 
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
+from utils.cyclemap import cyclemap, svd_compress_per_channel
 
 import numpy as np
 import pandas
@@ -32,8 +33,8 @@ class Exp_Main(Exp_Basic):
             'DACNet_In': DACNet_In,
             'DACNet_Out': DACNet_Out,
         }
-        map_raw = self._cyclemap()             
-        model = model_dict[self.args.model].Model(self.args, map_raw).float()        
+        map_raw, baseline = self._cyclemap()             
+        model = model_dict[self.args.model].Model(self.args, map_raw, baseline).float()        
         print('number of model params', sum(p.numel() for p in model.parameters() if p.requires_grad))
 
         if self.args.use_multi_gpu and self.args.use_gpu:
@@ -47,15 +48,20 @@ class Exp_Main(Exp_Basic):
             self.args.intra_len = self.args.cycle + self.args.pred_len
         else:
             self.args.intra_len = self.args.cycle + self.args.seq_len
+
         map_time = time.time()
-        train_data = torch.tensor(train_data).permute(1, 0).float().to(self.device)
-        map_raw = train_data.unfold(dimension=1, size=self.args.intra_len, step=self.args.cycle).permute(0, 2, 1)    # (C, P+L, S)
-        self.args.inter_len = map_raw.shape[2]
-        print('map_raw GPU:', map_raw.numel() * map_raw.element_size() / 1024**2, 'MB')
+
+        map_raw, baseline = cyclemap(train_data, self.args.seq_len, self.args.cycle, self.device, self.args.use_drift)
+        if self.args.use_svd:
+            map_raw = svd_compress_per_channel(map_raw, target_s=8, denoise_strength=0.95)
+
         print(time.time() - map_time)
-        print(map_raw.shape)     
+        print('map_raw GPU:', map_raw.numel() * map_raw.element_size() / 1024**2, 'MB')        
+        print(map_raw.shape)
+        
+        _, self.args.intra_len, self.args.inter_len = map_raw.shape     
                 
-        return map_raw
+        return map_raw, baseline
 
     def _get_data(self, flag):
         data_set, data_loader = data_provider(self.args, flag)

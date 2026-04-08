@@ -13,6 +13,8 @@ fixed:
   mix: 1
   seq_len: 96
   backbone: mlp
+  use_drift: 0
+  use_svd: 0
 pred_len_configs:
   96:
     use_norm: 2

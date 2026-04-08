@@ -17,9 +17,9 @@ class Fusion(nn.Module):
         self.similarity = similarity(sim_mode)                           
 
         self.denoise = nn.Sequential(
-            nn.Linear(intra_len, D_de),
+            nn.Linear(seq_len, D_de),
             nn.ReLU(),           
-            nn.Linear(D_de, intra_len),                    
+            nn.Linear(D_de, seq_len),                    
         )       
         self.compress = nn.Sequential(
             nn.Linear(inter_len, D_cp),
@@ -49,15 +49,11 @@ class Fusion(nn.Module):
         else:
             map_tmp = map_tmp.permute(0, 2, 1)                       # (C, H, P+L)
 
-        map_st = self.denoise(map_tmp)                               # (C, H, P+L)       
-
-
-        # indices = indices.unsqueeze(2).repeat(1, 1, self.D_cp, 1)
-        # map_dy = torch.gather(map_st.unsqueeze(0).repeat(B, 1, 1, 1), dim=3, index=indices)
-
         indices = torch.repeat_interleave(indices.unsqueeze(1).repeat(1, self.D_cp, 1), repeats=C, dim=0)
-        map_dy = torch.gather(map_st.repeat(B, 1, 1), dim=2, index=indices)     # (B*C, H, L)
-        map_dy = map_dy.reshape(B, C, self.D_cp, L)                             # (B, C, H, L)
+        map_dy = torch.gather(map_tmp.repeat(B, 1, 1), dim=2, index=indices)     # (B*C, H, L)
+        map_dy = map_dy.reshape(B, C, self.D_cp, L)                              # (B, C, H, L)
+
+        map_dy = self.denoise(map_dy)                               # (B, C, H, L)
 
         scores = self.similarity(x_loc, map_dy)               # (B, C, H)
         scores = torch.softmax(scores * self.scale, dim=2)    # (B, C, H)
@@ -65,5 +61,52 @@ class Fusion(nn.Module):
         lamda = torch.matmul(torch.sigmoid(self.lamda1), torch.sigmoid(self.lamda2)) # (C, L)
         x_global = torch.einsum('bchl,bch->bcl', map_dy, scores)      # (B, C, L)
         x_fuse = x_global * lamda + x_loc * (1 - lamda)               # (B, C, L)
+
+        return x_fuse
+
+
+
+class Fusion_SVD(nn.Module):
+
+    def __init__(self, map_raw, seq_len, intra_len, inter_len, enc_in, D_cp, D_de, D_mix, mix=0, sim_mode='l1', scale=0.05):
+        super(Fusion_SVD, self).__init__()
+        self.D_cp = D_cp
+        self.scale = scale
+        self.map_raw = map_raw
+        self.mix = mix
+
+        self.similarity = similarity(sim_mode)                           
+
+        if mix:
+            self.mixing = nn.Sequential(
+                nn.Linear(enc_in, D_mix),
+                nn.ReLU(),
+                nn.Linear(D_mix, enc_in),           
+            )
+
+        self.lamda1 = nn.Parameter(torch.zeros(enc_in, 1), requires_grad=True)
+        self.lamda2 = nn.Parameter(torch.zeros(1, seq_len), requires_grad=True)
+   
+
+    def forward(self, x_loc, indices, lamda=None):
+        B, C, L = x_loc.shape
+        H = self.map_raw.shape[2]        
+
+        if self.mix:
+            map_tmp = self.mixing(self.map_raw.permute(1, 2, 0))          # (P+L, H, C)
+            map_tmp = map_tmp.permute(2, 1, 0)                            # (C, H, P+L)
+        else:
+            map_tmp = self.map_raw.permute(0, 2, 1)                       # (C, H, P+L)
+  
+        indices = torch.repeat_interleave(indices.unsqueeze(1).repeat(1, H, 1), repeats=C, dim=0)
+        map_dy = torch.gather(map_tmp.repeat(B, 1, 1), dim=2, index=indices)     # (B*C, H, L)
+        map_dy = map_dy.reshape(B, C, H, L)                                      # (B, C, H, L)
+
+        scores = self.similarity(x_loc, map_dy)               # (B, C, H)
+        scores = torch.softmax(scores * self.scale, dim=2)    # (B, C, H)
+
+        lamda = torch.matmul(torch.sigmoid(self.lamda1), torch.sigmoid(self.lamda2)) # (C, L)
+        x_global = torch.einsum('bchl,bch->bcl', map_dy, scores)                     # (B, C, L)
+        x_fuse = x_global * lamda + x_loc * (1 - lamda)                              # (B, C, L)
 
         return x_fuse

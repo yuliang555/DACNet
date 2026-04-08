@@ -13,11 +13,13 @@ fixed:
   mix: 0
   seq_len: 96
   backbone: mlp
+  use_drift: 0
+  use_svd: 0
 pred_len_configs:
   96:
     use_norm: 2
     D_cp: 16
-    D_de: 8
+    D_de: 16
     D_mix: 8
     d_model: 256
   192:
@@ -35,6 +37,6 @@ pred_len_configs:
   720:
     use_norm: 1
     D_cp: 24
-    D_de: 16
+    D_de: 32
     D_mix: 8
     d_model: 256

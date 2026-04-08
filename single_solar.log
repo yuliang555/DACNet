@@ -1,0 +1,21 @@
+Args in experiment:
+Namespace(random_seed=2024, is_training=1, model_id='Solar', model='DACNet_In', run_type='single', data='Solar', root_path='/home/yl/datasets/', data_path='Solar.txt', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=192, label_len=48, pred_len=96, use_norm=1, D_cp=16, D_de=16, D_mix=8, beta=0.1, sim_mode='l1', mix=0, backbone='mlp', cycle=144, use_drift=1, use_svd=1, embed_type=0, enc_in=137, dec_in=7, c_out=7, d_model=256, n_heads=8, e_layers=2, d_layers=1, d_ff=2048, moving_avg=25, factor=0, distil=True, dropout=0.05, embed='timeF', activation='gelu', output_attention=True, do_predict=False, num_workers=10, itr=1, train_epochs=1, batch_size=32, patience=3, learning_rate=0.001, des='test', loss='mae', lradj='type1', pct_start=0.3, use_amp=False, use_gpu=True, gpu=0, use_multi_gpu=False, devices='0,1,2,3', test_flop=False)
+Use GPU: cuda:0
+train 36505
+13.534436464309692
+map_raw GPU: 4.185089111328125 MB
+torch.Size([137, 1001, 8])
+number of model params 111465
+>>>>>>>start training : DACNet_In_Solar_mlp_mae_d=256_lr=0.001_lradj=type1_sl=192_pl=96_norm=1_mix=0_Dcp=16_Dde=16_Dmix=8_sim=l1_cycle=144_seed=2024_drift=1>>>>>>>>>>>>>>>>>>>>>>>>>>
+train 36505
+val 5161
+test 10417
+Epoch: 1 cost time: 17.234146118164062
+Epoch: 1, Steps: 1140 | Train Loss: 0.3458104 Vali Loss: 0.2335692 Test Loss: 0.2602726
+Validation loss decreased (inf --> 0.233569).  Saving model ...
+Updating learning rate to 0.001
+>>>>>>>testing : DACNet_In_Solar_mlp_mae_d=256_lr=0.001_lradj=type1_sl=192_pl=96_norm=1_mix=0_Dcp=16_Dde=16_Dmix=8_sim=l1_cycle=144_seed=2024_drift=1<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+test 10417
+mse:0.23439699411392212, mae:0.26036199927330017
+=> Running: python -u run.py --is_training 1 --loss mae --random_seed 2024 --pred_len 96 --gpu 0 --use_gpu True --root_path /home/yl/datasets/ --data_path Solar.txt --model DACNet_In --model_id Solar --data Solar --enc_in 137 --cycle 144 --learning_rate 0.001 --lradj type1 --sim_mode l1 --mix 0 --seq_len 192 --backbone mlp --use_norm 1 --D_cp 16 --D_de 16 --D_mix 8 --d_model 256 --run_type single
+Single experiments completed.

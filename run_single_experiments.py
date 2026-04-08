@@ -9,7 +9,7 @@ CONFIGS_DIR = os.path.join(ROOT, 'configs')
 
 
 SEED_LIST = [2024]
-LOSS_LIST = ['mse', 'mae']
+LOSS_LIST = ['mae', 'mse']
 PRED_LEN_LIST = [96, 192, 336, 720]
 
 

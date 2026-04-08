@@ -1,23 +1,30 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from layers.Fusion import Fusion
+from layers.Fusion import Fusion, Fusion_SVD
 from layers.BackBone import iTransformer, Linear, MLP, DLinear, DMLP 
 from layers.Norm import InstanceNorm
-
+from utils.cyclemap import correlation
 
 
 class Model(nn.Module):
 
-    def __init__(self, configs, map_raw):
+    def __init__(self, configs, map_raw, baseline):
         super(Model, self).__init__()
         self.use_norm = configs.use_norm
-        # self.seq_len = configs.seq_len
-        # self.map_raw = map_raw
+        self.use_drift = configs.use_drift
+        self.seq_len = configs.seq_len
+        self.baseline = baseline
 
         self.norm = InstanceNorm(1, configs.use_norm)
-        self.fusion = Fusion(map_raw, configs.seq_len, configs.intra_len, configs.inter_len, configs.enc_in, 
-                             configs.D_cp, configs.D_de, configs.D_mix, mix=configs.mix, sim_mode=configs.sim_mode, scale=0.05)
+
+        if configs.use_svd:
+            self.fusion = Fusion_SVD(map_raw, configs.seq_len, configs.intra_len, configs.inter_len, configs.enc_in, 
+                                     configs.D_cp, configs.D_de, configs.D_mix, mix=configs.mix, sim_mode=configs.sim_mode, scale=0.05)
+        else:
+            self.fusion = Fusion(map_raw, configs.seq_len, configs.intra_len, configs.inter_len, configs.enc_in, 
+                                 configs.D_cp, configs.D_de, configs.D_mix, mix=configs.mix, sim_mode=configs.sim_mode, scale=0.05)
+            
         self.encoder = nn.Linear(configs.seq_len, configs.seq_len)
 
         if configs.backbone == 'itransformer':
@@ -36,29 +43,10 @@ class Model(nn.Module):
         if self.use_norm:
             x = self.norm(x, 'norm')
 
-        # seq_x = x.permute(0, 2, 1)
-        # seq_y = self.map_raw.permute(0, 2, 1).unfold(dimension=2, size=96, step=1) # C, S, P, L
-        # seq_y = seq_y.permute(2, 0, 1, 3)                                          # P, C, S, L
-
-        # # Pearson correlation
-        # eps = 1e-8
-        # mean_x = seq_x.mean(dim=2, keepdim=True)                # (B, C, 1)
-        # std_x = seq_x.std(dim=2, unbiased=False, keepdim=True)  # (B, C, 1)        
-        # mean_y = seq_y.mean(dim=3, keepdim=True)                # (P, C, S, 1)
-        # std_y = seq_y.std(dim=3, unbiased=False, keepdim=True)  # (P, C, S, 1)
-        # x_norm = (seq_x - mean_x) / (std_x + eps)               # (B, C, L)
-        # y_norm = (seq_y - mean_y) / (std_y + eps)               # (P, C, S, L)
-        
-        # corr = torch.einsum('bcl,pcsl->bpcs', x_norm, y_norm) / self.seq_len    # (B, P, C, S) 
-        
-        # mask_x = (std_x.squeeze(-1) < eps).unsqueeze(1).unsqueeze(3)            # (B, 1, C, 1)
-        # mask_y = (std_y.squeeze(-1) < eps).unsqueeze(0)                         # (1, P, C, S)
-        # corr = torch.where(mask_x | mask_y, torch.zeros_like(corr), corr)
-
-        # corr = corr.sum(dim=-1).permute(0, 2, 1)                                                # B, C, P
-        # period_indices = torch.arange(self.seq_len).unsqueeze(0).unsqueeze(0).to(corr.device)   # 1, 1, L
-        # indices = torch.argmax(corr, dim=-1, keepdim=True) + period_indices                     # B, C, L
-
+        if self.use_drift:
+            seq_x = x.permute(0, 2, 1)
+            seq_y = self.baseline.permute(1, 0, 2)                  # R, C, L
+            indices = correlation(seq_x, seq_y, self.seq_len)       # B, L
 
         x_loc = self.encoder(x.permute(0, 2, 1))      # (B, C, L)
         x_fuse = self.fusion(x_loc, indices)          # (B, C, L)                              

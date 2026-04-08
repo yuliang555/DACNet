@@ -44,6 +44,8 @@ parser.add_argument('--sim_mode', type=str, default='l1', help="simlarity measur
 parser.add_argument('--mix', type=int, default=0, help="0: no mixing, 1: with mixing")
 parser.add_argument('--backbone', type=str, default='mlp', help="options: ['linear', 'dlinear', 'mlp', 'dmlp', 'itransformer']")
 parser.add_argument('--cycle', type=int, default=96, help='period of data')
+parser.add_argument('--use_drift', type=int, default=0, help='0: no drift, 1: with drift')
+parser.add_argument('--use_svd', type=int, default=0, help='0: no SVD, 1: with SVD')
 
 # Formers 
 parser.add_argument('--embed_type', type=int, default=0, help='0: default 1: value embedding + temporal embedding + positional embedding 2: value embedding + temporal embedding 3: value embedding + positional embedding 4: value embedding')
@@ -56,7 +58,7 @@ parser.add_argument('--e_layers', type=int, default=2, help='num of encoder laye
 parser.add_argument('--d_layers', type=int, default=1, help='num of decoder layers')
 parser.add_argument('--d_ff', type=int, default=2048, help='dimension of fcn')
 parser.add_argument('--moving_avg', type=int, default=25, help='window size of moving average')
-parser.add_argument('--factor', type=int, default=1, help='attn factor')
+parser.add_argument('--factor', type=int, default=0, help='attn factor')
 parser.add_argument('--distil', action='store_false',
                     help='whether to use distilling in encoder, using this argument means not using distilling',
                     default=True)
@@ -111,7 +113,7 @@ Exp = Exp_Main
 if args.is_training:
     for ii in range(args.itr):
 
-        setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}_seed={}'.format(            
+        setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}_seed={}_drift={}'.format(            
             args.model,
             args.model_id,                               
             args.backbone,
@@ -128,7 +130,8 @@ if args.is_training:
             args.D_mix,
             args.sim_mode,
             args.cycle,
-            args.random_seed
+            args.random_seed,
+            args.use_drift
         )                            
 
         exp = Exp(args)  # set experiments
@@ -145,7 +148,7 @@ if args.is_training:
         torch.cuda.empty_cache()
 else:
 
-    setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}'.format(            
+    setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}_seed={}'.format(            
         args.model,
         args.model_id,                               
         args.backbone,
@@ -161,7 +164,8 @@ else:
         args.D_de,
         args.D_mix,
         args.sim_mode,
-        args.cycle
+        args.cycle,
+        args.random_seed
     )
 
     exp = Exp(args)  # set experiments

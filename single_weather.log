@@ -1,0 +1,61 @@
+Args in experiment:
+Namespace(random_seed=2024, is_training=1, model_id='Weather', model='DACNet_In', run_type='single', data='custom', root_path='/home/yl/datasets/', data_path='Weather.csv', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=96, label_len=48, pred_len=720, use_norm=2, D_cp=1, D_de=16, D_mix=8, beta=0.1, sim_mode='l1', mix=0, backbone='mlp', cycle=144, use_drift=0, embed_type=0, enc_in=21, dec_in=7, c_out=7, d_model=512, n_heads=8, e_layers=2, d_layers=1, d_ff=2048, moving_avg=25, factor=0, distil=True, dropout=0.05, embed='timeF', activation='gelu', output_attention=True, do_predict=False, num_workers=10, itr=1, train_epochs=30, batch_size=32, patience=3, learning_rate=0.01, des='test', loss='mae', lradj='type1', pct_start=0.3, use_amp=False, use_gpu=True, gpu=0, use_multi_gpu=False, devices='0,1,2,3', test_flop=False)
+Use GPU: cuda:0
+train 36072
+0.10987281799316406
+map_raw GPU: 4.90264892578125 MB
+torch.Size([21, 240, 255])
+number of model params 431895
+>>>>>>>start training : DACNet_In_Weather_mlp_mae_d=512_lr=0.01_lradj=type1_sl=96_pl=720_norm=2_mix=0_Dcp=1_Dde=16_Dmix=8_sim=l1_cycle=144_seed=2024_drift=0>>>>>>>>>>>>>>>>>>>>>>>>>>
+train 36072
+val 4551
+test 9820
+Epoch: 1 cost time: 9.393965482711792
+Epoch: 1, Steps: 1127 | Train Loss: 0.4554650 Vali Loss: 0.4525269 Test Loss: 0.3393560
+Validation loss decreased (inf --> 0.452527).  Saving model ...
+Updating learning rate to 0.01
+Epoch: 2 cost time: 10.182715892791748
+Epoch: 2, Steps: 1127 | Train Loss: 0.4498110 Vali Loss: 0.4561235 Test Loss: 0.3422369
+EarlyStopping counter: 1 out of 3
+Updating learning rate to 0.005
+Epoch: 3 cost time: 10.821315050125122
+Epoch: 3, Steps: 1127 | Train Loss: 0.4363937 Vali Loss: 0.4497942 Test Loss: 0.3378592
+Validation loss decreased (0.452527 --> 0.449794).  Saving model ...
+Updating learning rate to 0.0025
+Epoch: 4 cost time: 11.05392336845398
+Epoch: 4, Steps: 1127 | Train Loss: 0.4311450 Vali Loss: 0.4437671 Test Loss: 0.3385078
+Validation loss decreased (0.449794 --> 0.443767).  Saving model ...
+Updating learning rate to 0.00125
+Epoch: 5 cost time: 9.331517696380615
+Epoch: 5, Steps: 1127 | Train Loss: 0.4272184 Vali Loss: 0.4413939 Test Loss: 0.3368361
+Validation loss decreased (0.443767 --> 0.441394).  Saving model ...
+Updating learning rate to 0.000625
+Epoch: 6 cost time: 11.779933452606201
+Epoch: 6, Steps: 1127 | Train Loss: 0.4242958 Vali Loss: 0.4402797 Test Loss: 0.3372694
+Validation loss decreased (0.441394 --> 0.440280).  Saving model ...
+Updating learning rate to 0.0003125
+Epoch: 7 cost time: 11.674302816390991
+Epoch: 7, Steps: 1127 | Train Loss: 0.4222186 Vali Loss: 0.4404921 Test Loss: 0.3366611
+EarlyStopping counter: 1 out of 3
+Updating learning rate to 0.00015625
+Epoch: 8 cost time: 10.191850423812866
+Epoch: 8, Steps: 1127 | Train Loss: 0.4211211 Vali Loss: 0.4391172 Test Loss: 0.3367098
+Validation loss decreased (0.440280 --> 0.439117).  Saving model ...
+Updating learning rate to 7.8125e-05
+Epoch: 9 cost time: 11.930907249450684
+Epoch: 9, Steps: 1127 | Train Loss: 0.4205265 Vali Loss: 0.4397666 Test Loss: 0.3373408
+EarlyStopping counter: 1 out of 3
+Updating learning rate to 3.90625e-05
+Epoch: 10 cost time: 11.658607721328735
+Epoch: 10, Steps: 1127 | Train Loss: 0.4202178 Vali Loss: 0.4395245 Test Loss: 0.3371294
+EarlyStopping counter: 2 out of 3
+Updating learning rate to 1.953125e-05
+Epoch: 11 cost time: 10.035006523132324
+Epoch: 11, Steps: 1127 | Train Loss: 0.4200469 Vali Loss: 0.4395486 Test Loss: 0.3372688
+EarlyStopping counter: 3 out of 3
+Early stopping
+>>>>>>>testing : DACNet_In_Weather_mlp_mae_d=512_lr=0.01_lradj=type1_sl=96_pl=720_norm=2_mix=0_Dcp=1_Dde=16_Dmix=8_sim=l1_cycle=144_seed=2024_drift=0<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+test 9820
+mse:0.3442240059375763, mae:0.3366990089416504
+=> Running: python -u run.py --is_training 1 --loss mae --random_seed 2024 --pred_len 720 --gpu 0 --use_gpu True --root_path /home/yl/datasets/ --data_path Weather.csv --model DACNet_In --model_id Weather --data custom --enc_in 21 --cycle 144 --learning_rate 0.01 --lradj type1 --sim_mode l1 --mix 0 --seq_len 96 --backbone mlp --use_norm 2 --D_cp 1 --D_de 16 --D_mix 8 --d_model 512 --run_type single
+Single experiments completed.
