@@ -58,7 +58,7 @@ This extension replaces fixed-period folding and modulo-based phase selection wi
 2. **Build an anchor bank.** Extract every length-`L` sliding window from the first 1,000 training observations. Each anchor represents a candidate starting offset in this reference region.
 3. **Estimate the input's phase from values.** Compute Pearson correlation between the observed input and each anchor, separately for each channel. Sum these correlations across channels and select the anchor with the largest score. Thus, each sample receives one shared starting offset:
 
-   $$p^* = \operatorname*{arg\,max}_{p}\sum_c \operatorname{corr}(x_c, a_{p,c}).$$
+   `p* = argmax_p sum_c corr(x_c, a_{p,c})`
 
 4. **Align and enhance the historical window.** Gather the distilled cyclemap at offsets `p* + [0, ..., L - 1]`, then apply the same similarity retrieval and fusion as in `DACNet_In`.
 
