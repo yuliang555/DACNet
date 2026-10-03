@@ -57,7 +57,7 @@ This extension replaces fixed-period folding and modulo-based phase selection wi
 1. **Construct the cyclemap from ACF peaks.** For each channel, compute autocorrelation over the training history and detect local maxima. The peak lags determine the starting positions of recurrence segments, establishing their intra-cycle origins in the raw cyclemap. Gather a contiguous segment from each selected start; these segments form the inter-cycle dimension. The implementation keeps the same number of peaks across channels by truncating each channel's peak list to the smallest count.
 2. **Build an anchor bank.** Extract every length-`L` sliding window from the first 1,000 training observations. Each anchor represents a candidate starting offset in this reference region.
 3. **Estimate the input's phase from values.** Compute Pearson correlation between the observed input and each anchor, separately for each channel. Sum these correlations across channels and select the anchor with the largest score. Thus, each sample receives one shared starting offset:
-
+$$123$$
    `p* = argmax_p sum_c corr(x_c, a_{p,c})`
 
 4. **Align and enhance the historical window.** Gather the distilled cyclemap at offsets `p* + [0, ..., L - 1]`, then apply the same similarity retrieval and fusion as in `DACNet_In`.
