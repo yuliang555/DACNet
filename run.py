@@ -16,7 +16,6 @@ parser.add_argument('--is_training', type=int, default=1, help='status')
 parser.add_argument('--model_id', type=str, default='test', help='model id')
 parser.add_argument('--model', type=str, default='DACNet_In',
                     help='model name, options: [DACNet_In, DACNet_Out]')
-parser.add_argument('--run_type', type=str, default=all, help='options: [all, sigle]')
 
 # data loader
 parser.add_argument('--data', type=str, default='ETTh1', help='dataset type')
@@ -113,25 +112,13 @@ Exp = Exp_Main
 if args.is_training:
     for ii in range(args.itr):
 
-        setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}_seed={}_drift={}'.format(            
+        setting = '{}_{}_sl={}_pl={}_drift={}_seed={}'.format(            
             args.model,
             args.model_id,                               
-            args.backbone,
-            args.loss,                            
-            args.d_model,
-            args.learning_rate,
-            args.lradj,
             args.seq_len,                       
             args.pred_len,
-            args.use_norm,
-            args.mix,
-            args.D_cp,
-            args.D_de,
-            args.D_mix,
-            args.sim_mode,
-            args.cycle,
+            args.use_drift,
             args.random_seed,
-            args.use_drift
         )                            
 
         exp = Exp(args)  # set experiments
@@ -148,24 +135,13 @@ if args.is_training:
         torch.cuda.empty_cache()
 else:
 
-    setting = '{}_{}_{}_{}_d={}_lr={}_lradj={}_sl={}_pl={}_norm={}_mix={}_Dcp={}_Dde={}_Dmix={}_sim={}_cycle={}_seed={}'.format(            
+    setting = '{}_{}_sl={}_pl={}_drift={}_seed={}'.format(            
         args.model,
         args.model_id,                               
-        args.backbone,
-        args.loss,                            
-        args.d_model,
-        args.learning_rate,
-        args.lradj,
         args.seq_len,                       
         args.pred_len,
-        args.use_norm,
-        args.mix,
-        args.D_cp,
-        args.D_de,
-        args.D_mix,
-        args.sim_mode,
-        args.cycle,
-        args.random_seed
+        args.use_drift,
+        args.random_seed,
     )
 
     exp = Exp(args)  # set experiments

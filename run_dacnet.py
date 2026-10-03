@@ -67,7 +67,9 @@ if __name__ == '__main__':
                 cfg.update(pred_len_configs[pred_len])
                 cfg['pred_len'] = pred_len
                 cfg['root_path'] = args.root_path
-                cfg['run_type'] = 'single'
+
+                cfg['model'] = 'DACNet_In'
+                cfg['use_drift'] = 0
 
                 run_one(cfg, seed, loss, pred_len, gpu=args.gpu)
 

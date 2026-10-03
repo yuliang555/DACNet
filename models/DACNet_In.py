@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from layers.Fusion import Fusion, Fusion_SVD
+from layers.Fusion import Cyclemap, Fusion
 from layers.BackBone import iTransformer, Linear, MLP, DLinear, DMLP 
 from layers.Norm import InstanceNorm
 from utils.cyclemap import correlation
@@ -9,23 +9,23 @@ from utils.cyclemap import correlation
 
 class Model(nn.Module):
 
-    def __init__(self, configs, map_raw, baseline):
+    def __init__(self, configs, map_raw, anchor):
         super(Model, self).__init__()
         self.use_norm = configs.use_norm
         self.use_drift = configs.use_drift
         self.seq_len = configs.seq_len
-        self.baseline = baseline
+        self.anchor = anchor
 
-        self.norm = InstanceNorm(1, configs.use_norm)
+        self.norm = InstanceNorm(2, configs.use_norm)
 
         if configs.use_svd:
-            self.fusion = Fusion_SVD(map_raw, configs.seq_len, configs.intra_len, configs.inter_len, configs.enc_in, 
-                                     configs.D_cp, configs.D_de, configs.D_mix, mix=configs.mix, sim_mode=configs.sim_mode, scale=0.05)
+            self.cyclemap = Cyclemap(map_raw, configs.intra_len, configs.inter_len, configs.enc_in, 
+                                 configs.D_cp, configs.D_mix, configs.D_de, compress=0, mix=configs.mix, denoise=0)
         else:
-            self.fusion = Fusion(map_raw, configs.seq_len, configs.intra_len, configs.inter_len, configs.enc_in, 
-                                 configs.D_cp, configs.D_de, configs.D_mix, mix=configs.mix, sim_mode=configs.sim_mode, scale=0.05)
-            
-        self.encoder = nn.Linear(configs.seq_len, configs.seq_len)
+            self.cyclemap = Cyclemap(map_raw, configs.intra_len, configs.inter_len, configs.enc_in, 
+                                 configs.D_cp, configs.D_mix, configs.D_de, compress=1, mix=configs.mix, denoise=1)
+
+        self.fusion = Fusion(configs.seq_len, configs.enc_in, sim_mode=configs.sim_mode, scale=None)
 
         if configs.backbone == 'itransformer':
             self.backbone = iTransformer(configs)
@@ -39,22 +39,20 @@ class Model(nn.Module):
             self.backbone = DMLP(configs)
 
     def forward(self, x, x_mark, indices):
-        
+        x = x.permute(0, 2, 1)                          # (B, C, L)        
         if self.use_norm:
             x = self.norm(x, 'norm')
 
         if self.use_drift:
-            seq_x = x.permute(0, 2, 1)
-            seq_y = self.baseline.permute(1, 0, 2)                  # R, C, L
-            indices = correlation(seq_x, seq_y, self.seq_len)       # B, L
+            indices = correlation(x, self.anchor, self.seq_len)       # B, L
 
-        x_loc = self.encoder(x.permute(0, 2, 1))      # (B, C, L)
-        x_fuse = self.fusion(x_loc, indices)          # (B, C, L)                              
-        dec_out = self.backbone(x_fuse, x_mark)       # (B, C, T)
-        dec_out = dec_out.permute(0, 2, 1)            # (B, T, C)                                              
-            
+        map_dy = self.cyclemap(indices)                 # (B, C, H, L)
+        x_fuse = self.fusion(x, map_dy)                 # (B, C, L)
+        dec_out = self.backbone(x_fuse, x_mark)         # (B, C, T)
+                                                                 
         if self.use_norm:
             dec_out = self.norm(dec_out, 'denorm')
+        dec_out = dec_out.permute(0, 2, 1)              # (B, T, C)
 
         return dec_out
     

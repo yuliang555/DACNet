@@ -68,7 +68,7 @@ def cyclemap(data, seq_len, cycle, device, drift=0):
         C, L = data.shape    
         max_lag = L - idx_len - seq_len
 
-        baseline = data[:, :max_len].unfold(dimension=1, size=seq_len, step=1)
+        anchor = data[:, :max_len].unfold(dimension=1, size=seq_len, step=1).permute(1, 0, 2)
 
         acf_values = []
         
@@ -111,8 +111,8 @@ def cyclemap(data, seq_len, cycle, device, drift=0):
         map_raw = data[batch_indices, final_indices]  # (C, S, I)
     else:
         map_raw = data.unfold(dimension=1, size=cycle+seq_len, step=cycle).permute(0, 2, 1)
-        baseline = None
+        anchor = None
 
-    return map_raw, baseline
+    return map_raw, anchor
 
     

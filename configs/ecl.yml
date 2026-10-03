@@ -11,7 +11,7 @@ fixed:
   lradj: type4
   sim_mode: l1
   mix: 0
-  seq_len: 192
+  seq_len: 96
   backbone: mlp
   use_drift: 0
   use_svd: 0

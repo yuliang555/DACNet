@@ -82,10 +82,10 @@ class Dataset_ETT_hour(Dataset):
 
         if any(substr in self.args.model for substr in {'Out'}):        
             self.indices = torch.arange(self.pred_len)
-            self.cycle_index = (np.arange(len(data)) % self.args.cycle)[border1:border2]
+            self.cycle_index = ((np.arange(len(data)) + self.seq_len) % self.args.cycle)[border1:border2]
         else:
             self.indices = torch.arange(self.seq_len)
-            self.cycle_index = ((np.arange(len(data)) + self.seq_len) % self.args.cycle)[border1:border2]
+            self.cycle_index = (np.arange(len(data)) % self.args.cycle)[border1:border2]
 
     def __getitem__(self, index):        
         s_begin = index
@@ -182,10 +182,10 @@ class Dataset_ETT_minute(Dataset):
 
         if any(substr in self.args.model for substr in {'Out'}):        
             self.indices = torch.arange(self.pred_len)
-            self.cycle_index = (np.arange(len(data)) % self.args.cycle)[border1:border2]
+            self.cycle_index = ((np.arange(len(data)) + self.seq_len) % self.args.cycle)[border1:border2]
         else:
             self.indices = torch.arange(self.seq_len)
-            self.cycle_index = ((np.arange(len(data)) + self.seq_len) % self.args.cycle)[border1:border2]
+            self.cycle_index = (np.arange(len(data)) % self.args.cycle)[border1:border2]
 
     def __getitem__(self, index):
         s_begin = index
@@ -293,10 +293,10 @@ class Dataset_Custom(Dataset):
 
         if any(substr in self.args.model for substr in {'Out'}):        
             self.indices = torch.arange(self.pred_len)
-            self.cycle_index = (np.arange(len(data)) % self.args.cycle)[border1:border2]
+            self.cycle_index = ((np.arange(len(data)) + self.seq_len) % self.args.cycle)[border1:border2]
         else:
             self.indices = torch.arange(self.seq_len)
-            self.cycle_index = ((np.arange(len(data)) + self.seq_len) % self.args.cycle)[border1:border2]
+            self.cycle_index = (np.arange(len(data)) % self.args.cycle)[border1:border2]
 
     def __getitem__(self, index):
         s_begin = index
@@ -379,10 +379,10 @@ class Dataset_Solar(Dataset):
 
         if any(substr in self.args.model for substr in {'Out'}):        
             self.indices = torch.arange(self.pred_len)
-            self.cycle_index = (np.arange(len(data)) % self.args.cycle)[border1:border2]
+            self.cycle_index = ((np.arange(len(data)) + self.seq_len) % self.args.cycle)[border1:border2]
         else:
             self.indices = torch.arange(self.seq_len)
-            self.cycle_index = ((np.arange(len(data)) + self.seq_len) % self.args.cycle)[border1:border2]
+            self.cycle_index = (np.arange(len(data)) % self.args.cycle)[border1:border2]
 
     def __getitem__(self, index):
         s_begin = index

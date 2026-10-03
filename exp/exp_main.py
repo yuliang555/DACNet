@@ -19,7 +19,6 @@ import time
 import warnings
 import matplotlib.pyplot as plt
 import numpy as np
-import psutil
 
 warnings.filterwarnings('ignore')
 
@@ -33,8 +32,8 @@ class Exp_Main(Exp_Basic):
             'DACNet_In': DACNet_In,
             'DACNet_Out': DACNet_Out,
         }
-        map_raw, baseline = self._cyclemap()             
-        model = model_dict[self.args.model].Model(self.args, map_raw, baseline).float()        
+        map_raw, anchor = self._cyclemap()             
+        model = model_dict[self.args.model].Model(self.args, map_raw, anchor).float()        
         print('number of model params', sum(p.numel() for p in model.parameters() if p.requires_grad))
 
         if self.args.use_multi_gpu and self.args.use_gpu:
@@ -45,13 +44,12 @@ class Exp_Main(Exp_Basic):
         train_data = self._get_data('train')[0].data_x
 
         if any(substr in self.args.model for substr in {'Out'}):
-            self.args.intra_len = self.args.cycle + self.args.pred_len
+            map_raw, anchor = cyclemap(train_data, self.args.pred_len, self.args.cycle, self.device, drift=0)
         else:
-            self.args.intra_len = self.args.cycle + self.args.seq_len
+            map_raw, anchor = cyclemap(train_data, self.args.seq_len, self.args.cycle, self.device, self.args.use_drift)
 
         map_time = time.time()
-
-        map_raw, baseline = cyclemap(train_data, self.args.seq_len, self.args.cycle, self.device, self.args.use_drift)
+        
         if self.args.use_svd:
             map_raw = svd_compress_per_channel(map_raw, target_s=8, denoise_strength=0.95)
 
@@ -61,7 +59,7 @@ class Exp_Main(Exp_Basic):
         
         _, self.args.intra_len, self.args.inter_len = map_raw.shape     
                 
-        return map_raw, baseline
+        return map_raw, anchor
 
     def _get_data(self, flag):
         data_set, data_loader = data_provider(self.args, flag)
@@ -252,7 +250,7 @@ class Exp_Main(Exp_Basic):
         mae, mse = metric(preds, trues)
 
         # metric_path = f"Print/{self.args.model_id}_{self.args.pred_len}.csv"
-        metric_path = f"results_{self.args.run_type}.csv"
+        metric_path = f"results.csv"
         if not os.path.exists(metric_path):
             open(metric_path, "w").close()                      
         df = pandas.DataFrame({
